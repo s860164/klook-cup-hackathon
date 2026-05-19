@@ -940,6 +940,67 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
   );
 }
 
+// ─── Demo Day RSVP ──────────────────────────────────────────────
+function DemoDaySection({ onRSVP }) {
+  const [email, setEmail] = useState('');
+  const [done, setDone]   = useState(false);
+  const [err, setErr]     = useState('');
+
+  function handle(e) {
+    e.preventDefault();
+    setErr('');
+    if (!email.trim()) { setErr('Add your @klook.com username'); return; }
+    onRSVP(email.trim() + '@klook.com');
+    setDone(true);
+    setEmail('');
+  }
+
+  return (
+    <section className="section section--demoday" id="demoday">
+      <div className="container">
+        <div className="demoday-card">
+
+          <div className="demoday-info">
+            <div className="demoday-badge">📅 Open to all Klookers</div>
+            <h3>Watch the Demo Day</h3>
+            <p>Not building this time? Come see what your colleagues shipped in 5 days. Hybrid — join in person or hop on Google Meet.</p>
+            <div className="demoday-details">
+              <span>📆 Mon Jun 29 · 3:00 – 4:30 PM</span>
+              <span>📍 Taipei Business Office + Google Meet</span>
+            </div>
+          </div>
+
+          <div className="demoday-form-wrap">
+            {done ? (
+              <div className="demoday-success">
+                <div className="demoday-success-icon">🎉</div>
+                <div className="demoday-success-title">You're on the list!</div>
+                <div className="demoday-success-sub">A Google Calendar invite is on its way to your inbox.</div>
+              </div>
+            ) : (
+              <form onSubmit={handle}>
+                <p className="demoday-form-label">Get a calendar invite</p>
+                <div className="email-input-wrap demoday-email">
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value.replace(/@.*$/, ''))}
+                    placeholder="your.name"
+                  />
+                  <span className="email-suffix">@klook.com</span>
+                </div>
+                {err && <div className="demoday-err">{err}</div>}
+                <button type="submit" className="btn-demoday">Get Demo Day Invite →</button>
+              </form>
+            )}
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Footer ─────────────────────────────────────────────────────
 function Footer() {
   return (
@@ -966,11 +1027,9 @@ function App() {
   }
   const SCRIPT_URL = 'https://script.google.com/a/macros/klook.com/s/AKfycbyfWd5t4nNSyRZqY0572awDzNodW04MM7mDEthkWqKAVAcJ8tmoZNJ8imRhrtzYN5IvPw/exec';
 
-  function onSubmit(payload) {
-    // Use hidden-iframe form POST so the browser sends Google session cookies.
-    // This satisfies the "Anyone within Klook" Apps Script access restriction
-    // without needing a backend — participants are Klook employees and already
-    // authenticated, so their google.com cookies are included automatically.
+  // Hidden-iframe form POST: sends Google session cookies, satisfying
+  // "Anyone within Klook" Apps Script auth with no backend required.
+  function iframePost(fields) {
     let iframe = document.getElementById('__submit_frame');
     if (!iframe) {
       iframe = document.createElement('iframe');
@@ -983,7 +1042,7 @@ function App() {
     form.method = 'POST';
     form.action = SCRIPT_URL;
     form.target = '__submit_frame';
-    [['email', payload.email], ['idea', payload.idea]].forEach(([n, v]) => {
+    Object.entries(fields).forEach(([n, v]) => {
       const inp = document.createElement('input');
       inp.type  = 'hidden';
       inp.name  = n;
@@ -993,9 +1052,18 @@ function App() {
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
+  }
 
+  function onSubmit(payload) {
+    // Write to sheet + confirmation email + auto-add to Demo Day calendar
+    iframePost({ action: 'submit', email: payload.email, idea: payload.idea });
     setSubmitted((p) => [...p, payload]);
     showToast(`✨ Idea #${submitted.length + 1} submitted! Check your inbox for a confirmation email.`, 'success');
+  }
+
+  function onDemoDayRSVP(email) {
+    // Just add to Demo Day calendar event — no sheet write needed
+    iframePost({ action: 'demo_day', email });
   }
   function onRemove(i) {
     setSubmitted((p) => p.filter((_, idx) => idx !== i));
@@ -1028,6 +1096,7 @@ function App() {
       <AwardsSection />
       <FAQSection />
       <SubmitSection onSubmit={onSubmit} submitted={submitted} onRemove={onRemove} />
+      <DemoDaySection onRSVP={onDemoDayRSVP} />
       <Footer />
 
       <FinalistModal project={openProject} onClose={() => setOpenProject(null)} />
