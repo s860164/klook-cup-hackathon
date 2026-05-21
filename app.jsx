@@ -964,7 +964,15 @@ function DemoDaySection({ onRSVP }) {
     e.preventDefault();
     setErr('');
     if (!email.trim()) { setErr('Add your @klook.com username'); return; }
-    onRSVP(email.trim() + '@klook.com');
+    const fullEmail = email.trim() + '@klook.com';
+    onRSVP(fullEmail);
+    // Open Google Calendar event directly — works for any Klooker without backend
+    const calUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' +
+      '&text=Klook+AI+Hackathon+Season+2+%E2%80%93+Demo+Day' +
+      '&dates=20260629T070000Z%2F20260629T083000Z' +
+      '&details=Come+watch+the+amazing+AI+projects+built+by+Klookers!%0A%0ALocation%3A+TBD' +
+      '&location=Taipei+Business+Office+%2B+Google+Meet';
+    window.open(calUrl, '_blank');
     setDone(true);
     setEmail('');
   }
@@ -989,7 +997,7 @@ function DemoDaySection({ onRSVP }) {
               <div className="demoday-success">
                 <div className="demoday-success-icon">🎉</div>
                 <div className="demoday-success-title">You're on the list!</div>
-                <div className="demoday-success-sub">A Google Calendar invite is on its way to your inbox.</div>
+                <div className="demoday-success-sub">Google Calendar opened in a new tab — click Save to add it to your calendar.</div>
               </div>
             ) : (
               <form onSubmit={handle}>
