@@ -1,0 +1,148 @@
+/* Klook Design System — Colors & Typography Tokens
+   Extracted from Klook EDM (Global Service Standard Policy Newsletter)
+   and the Klook brand illustration library. */
+
+/* Brand font — Poppins. Bold weight is shipped locally;
+   other weights are pulled from Google Fonts as fallbacks. */
+@font-face {
+  font-family: 'Poppins';
+  src: url('fonts/Poppins-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap');
+
+:root {
+  /* ── Brand primaries ─────────────────────────────────────────────── */
+  --klook-orange:         #FF5722;   /* Primary brand, CTA, accents */
+  --klook-orange-light:   #FF7B33;   /* Gradient end */
+  --klook-orange-peach:   #FFE0CC;   /* Body text on orange bg */
+  --klook-orange-cream:   #FFF3ED;   /* Soft tint bg */
+
+  --klook-navy:           #1A1462;   /* Section titles, key text */
+  --klook-navy-deep:      #0D0B3E;   /* Hero gradient start */
+  --klook-navy-mid:       #2D2080;   /* Hero gradient end */
+
+  --klook-purple:         #4D40CC;
+  --klook-purple-light:   #6B5CE7;
+  --klook-purple-accent:  #5533FF;   /* Badges / icons */
+  --klook-purple-soft:    #EEEAFF;   /* Icon bg */
+  --klook-purple-bg:      #F8F6FF;   /* SBR card bg */
+
+  --klook-teal:           #00CCD1;
+  --klook-teal-light:     #33DDD8;
+  --klook-teal-deep:      #00A5A0;   /* Icon / suspension */
+  --klook-teal-soft:      #E6FFF9;
+
+  --klook-gold:           #FFB800;
+  --klook-gold-deep:      #CC9200;
+  --klook-gold-sun:       #FFB74D;   /* Hero subtitle */
+
+  /* ── Semantic ─────────────────────────────────────────────────────── */
+  --strike-red:           #CC3300;
+  --danger-red:           #FF5722;
+  --success-green:        #22AA44;
+  --warning-amber:        #F5A623;
+  --comp-orange:          #CC6600;
+
+  /* ── Text ─────────────────────────────────────────────────────────── */
+  --text-primary:         #1A1462;
+  --text-body:            #555555;
+  --text-secondary:       #666666;
+  --text-muted:           #999999;
+  --text-footnote:        #878683;
+  --text-white:           #FFFFFF;
+  --text-white-muted:     rgba(255,255,255,0.6);
+  --text-light-purple:    #CCCCEE;
+  --text-light-teal:      #E0FFFF;
+  --text-peach:           #FFE0CC;
+
+  /* ── Surfaces ─────────────────────────────────────────────────────── */
+  --bg-white:             #FFFFFF;
+  --bg-warm-light:        #FFF8F3;
+  --bg-warm-cream:        #FFF3E0;
+  --bg-cool-light:        #F8F6FF;
+  --bg-page:              #F0F0F0;
+
+  /* ── Borders ─────────────────────────────────────────────────────── */
+  --border-warm:          #FFE0CC;
+  --border-warm-light:    #FFE8CC;
+  --border-warm-divider:  #FFDACC;
+  --border-purple:        #D6CCFF;
+  --border-amber:         rgba(255,184,0,0.27);
+  --border-subtle:        #E8E8E8;
+
+  /* ── Gradients ────────────────────────────────────────────────────── */
+  --gradient-orange:      linear-gradient(180deg, #FF5722 0%, #FF7B33 100%);
+  --gradient-navy:        linear-gradient(160deg, #0D0B3E 0%, #1A1462 50%, #2D2080 100%);
+  --gradient-purple:      linear-gradient(180deg, #4D40CC 0%, #6B5CE7 100%);
+  --gradient-teal:        linear-gradient(180deg, #00CCD1 0%, #33DDD8 100%);
+  --gradient-gold:        linear-gradient(180deg, #FFB800 0%, #FFCC33 100%);
+
+  /* ── Typography ──────────────────────────────────────────────────── */
+  --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --fs-display:  36px;  --fw-display: 800;  --lh-display: 1.15;
+  --fs-h1:       32px;  --fw-h1:      800;  --lh-h1:      1.2;
+  --fs-h2:       22px;  --fw-h2:      800;  --lh-h2:      1.25;
+  --fs-h3:       18px;  --fw-h3:      800;  --lh-h3:      1.3;
+  --fs-h4:       16px;  --fw-h4:      800;  --lh-h4:      1.3;
+  --fs-subtitle: 16px;  --fw-subtitle:400;  --lh-subtitle:1.5;
+  --fs-card-title:15px; --fw-card-title:700;
+  --fs-label:    14px;  --fw-label:   700;
+  --fs-badge:    14px;  --fw-badge:   800;  --ls-badge: 1px;
+  --fs-body:     14px;  --fw-body:    400;  --lh-body: 1.6;
+  --fs-card-body:12px;  --fw-card-body:400; --lh-card-body:1.5;
+  --fs-small:    11px;  --lh-small: 1.4;
+  --fs-caption:  10px;
+  --fs-footnote: 9px;
+  --fs-micro:    8px;
+
+  /* ── Spacing ─────────────────────────────────────────────────────── */
+  --sp-2:   2px;  --sp-4:   4px;  --sp-6:   6px;  --sp-8:   8px;
+  --sp-10: 10px;  --sp-12: 12px;  --sp-14: 14px;  --sp-16: 16px;
+  --sp-20: 20px;  --sp-24: 24px;  --sp-28: 28px;  --sp-32: 32px;
+  --sp-36: 36px;  --sp-40: 40px;  --sp-48: 48px;  --sp-56: 56px;
+
+  --edm-width: 600px;
+
+  /* ── Radii ───────────────────────────────────────────────────────── */
+  --r-sm:  6px;   /* badge pills */
+  --r-md:  8px;   /* icon containers, small buttons */
+  --r-lg:  12px;  /* feature cards */
+  --r-xl:  14px;  /* compensation cards */
+  --r-2xl: 20px;  /* header badge pill */
+  --r-pill:24px;  /* CTA buttons */
+  --r-circle: 9999px;
+
+  /* ── Shadows ─────────────────────────────────────────────────────── */
+  --shadow-card:   0 2px 8px rgba(26,20,98,0.06);
+  --shadow-hover:  0 6px 20px rgba(26,20,98,0.12);
+  --shadow-cta:    0 4px 14px rgba(255,87,34,0.35);
+}
+
+/* ── Reset + base ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  color: var(--text-body);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Semantic text classes ────────────────────────────────────────── */
+.k-display  { font-size: var(--fs-display); font-weight: 800; line-height: var(--lh-display); color: var(--text-white); }
+.k-h1       { font-size: var(--fs-h1);   font-weight: 800; line-height: var(--lh-h1);   color: var(--text-primary); }
+.k-h2       { font-size: var(--fs-h2);   font-weight: 800; line-height: var(--lh-h2);   color: var(--text-primary); }
+.k-h3       { font-size: var(--fs-h3);   font-weight: 800; line-height: var(--lh-h3);   }
+.k-h4       { font-size: var(--fs-h4);   font-weight: 800; line-height: var(--lh-h4);   color: var(--text-primary); }
+.k-subtitle { font-size: var(--fs-subtitle); font-weight: 400; line-height: var(--lh-subtitle); color: var(--text-body); }
+.k-body     { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-body); }
+.k-card-body{ font-size: var(--fs-card-body); line-height: var(--lh-card-body); color: var(--text-secondary); }
+.k-small    { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text-muted); }
+.k-caption  { font-size: var(--fs-caption); color: var(--text-muted); }
+.k-micro    { font-size: var(--fs-micro); font-style: italic; color: var(--text-footnote); }
+.k-kicker   { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-white); }

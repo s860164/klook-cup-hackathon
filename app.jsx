@@ -168,15 +168,21 @@ function ConfettiLayer({ enabled }) {
 
 // ─── Hero ───────────────────────────────────────────────────────
 function Hero({ variant, showVideoBg }) {
+  const isDefault = variant !== 'daylight' && variant !== 'burst';
   return (
-    <section className="hero" data-screen-label="Hero" id="hero"
+    <section className={`hero${isDefault ? ' hero--banner' : ''}`} data-screen-label="Hero" id="hero"
       style={
         variant === 'daylight' ? {
           background: 'linear-gradient(160deg, #FFF8F3 0%, #FFF3E0 60%, #FFE0CC 100%)',
           color: 'var(--klook-navy)',
         } : variant === 'burst' ? {
           background: 'linear-gradient(160deg, #FF5722 0%, #FF7B33 50%, #FFB800 100%)',
-        } : undefined
+        } : {
+          backgroundImage: 'url(assets/hero-banner.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'no-repeat',
+        }
       }
     >
       <img className="hero-sparkle" src="assets/klook/illos/FI005-sparkles-stars.png" alt=""
@@ -188,9 +194,11 @@ function Hero({ variant, showVideoBg }) {
 
       <div className="container hero-inner">
         <div>
-          <span className="hero-badge">
-            Season 2 · Taipei · June 24 – 29 · 2026
-          </span>
+          {!isDefault && (
+            <span className="hero-badge">
+              Season 2 · Taipei · June 24 – 29 · 2026
+            </span>
+          )}
           <h1>
             Your Idea.<br/>
             <span className="accent-orange">Built with AI.</span><br/>
@@ -226,7 +234,7 @@ function Hero({ variant, showVideoBg }) {
           </div>
         </div>
 
-        <HeroVisual variant={variant} showVideoBg={showVideoBg} />
+        {!isDefault && <HeroVisual variant={variant} showVideoBg={showVideoBg} />}
       </div>
     </section>
   );
@@ -835,7 +843,12 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
     setError('');
     if (!email.trim()) { setError('Add your @klook.com username'); return; }
     if (idea.trim().length < 12) { setError('Tell us a bit more about your idea (12+ chars)'); return; }
+    if (idea.trim().length > 2000) { setError('Idea too long — please keep it under 2000 characters'); return; }
     if (!committed) { setError('Please commit to the Jun 24–28 build window'); return; }
+    // Client-side rate limit: one submission per 30 seconds
+    const lastSubmit = parseInt(localStorage.getItem('_hs_last_submit') || '0', 10);
+    if (Date.now() - lastSubmit < 30000) { setError('Please wait a moment before submitting again'); return; }
+    localStorage.setItem('_hs_last_submit', String(Date.now()));
     onSubmit({ email: email.trim() + '@klook.com', idea: idea.trim() });
     setIdea('');
     setError('');
@@ -896,6 +909,7 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
             <div className="form-row">
               <label>What's the personal-life problem you want to solve? <span className="req">*</span></label>
               <textarea className="form-textarea" value={idea} onChange={(e) => setIdea(e.target.value)}
+                maxLength={2000}
                 placeholder="e.g. I want a tool that watches our family WhatsApp for school deadlines and adds them to my calendar…" />
               <p className="form-hint"><b>Reminder:</b> nothing related to Klook work, customers, partners, or internal systems. Stick to <em>your</em> life.</p>
             </div>

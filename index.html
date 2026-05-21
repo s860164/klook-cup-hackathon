@@ -122,6 +122,19 @@
   }
 
   /* ─────────────────────────────────────────────── HERO */
+  /* Banner hero: push content into lower portion of the image */
+  .hero--banner .hero-inner {
+    padding-top: clamp(220px, 26vw, 420px);
+    padding-bottom: 80px;
+    align-items: flex-end;
+  }
+  @media (max-width: 900px) {
+    .hero--banner .hero-inner {
+      padding-top: clamp(140px, 42vw, 260px);
+      padding-bottom: 60px;
+    }
+  }
+
   .hero {
     position: relative; overflow: hidden;
     background: var(--gradient-navy);
@@ -135,6 +148,28 @@
       radial-gradient(700px 500px at -10% 100%, rgba(0,204,209,.18), transparent 60%);
     pointer-events: none;
   }
+  /* Dark gradient overlay for banner variant — fades image into navy */
+  .hero--banner { padding-top: 0; }
+  .hero--banner::before {
+    background: linear-gradient(to bottom,
+      rgba(13,11,62,0)   0%,
+      rgba(13,11,62,0)   28%,
+      rgba(13,11,62,.72) 56%,
+      rgba(13,11,62,.97) 74%,
+      rgba(13,11,62,1)   100%
+    );
+    z-index: 1;
+  }
+  /* Readability over image:
+     - h1 uses filter:drop-shadow because text-shadow doesn't work on gradient-clipped text
+     - tagline uses text-shadow (plain text, no clip) */
+  .hero--banner h1 {
+    filter: drop-shadow(0 2px 14px rgba(0,0,0,.75)) drop-shadow(0 1px 4px rgba(0,0,0,.55));
+  }
+  .hero--banner .hero-tagline {
+    text-shadow: 0 2px 12px rgba(0,0,0,.65), 0 1px 3px rgba(0,0,0,.45);
+  }
+  .hero--banner .hero-inner { position: relative; z-index: 2; }
   .hero-inner {
     position: relative; z-index: 2;
     display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px;
@@ -1155,8 +1190,8 @@
 <div id="root"></div>
 
 <!-- React + Babel -->
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
 <script src="data.js"></script>
