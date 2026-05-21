@@ -1039,7 +1039,7 @@ function App() {
     setToast({ msg, kind });
     setTimeout(() => setToast(null), 3000);
   }
-  const SCRIPT_URL = 'https://script.google.com/a/macros/klook.com/s/AKfycbyfWd5t4nNSyRZqY0572awDzNodW04MM7mDEthkWqKAVAcJ8tmoZNJ8imRhrtzYN5IvPw/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzI5KYBJbIQhcwI9hPcaXPnAuFgijNK6OIxTyB7c49YbvhhCjEwKprA29ACClX8FXNz/exec';
 
   // Hidden-iframe form POST: sends Google session cookies, satisfying
   // "Anyone within Klook" Apps Script auth with no backend required.
