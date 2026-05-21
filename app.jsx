@@ -970,7 +970,7 @@ function DemoDaySection({ onRSVP }) {
     const calUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' +
       '&text=Klook+AI+Hackathon+Season+2+%E2%80%93+Demo+Day' +
       '&dates=20260629T070000Z%2F20260629T083000Z' +
-      '&details=Come+watch+the+amazing+AI+projects+built+by+Klookers!%0A%0ALocation%3A+TBD' +
+      '&details=Come+watch+the+amazing+AI+projects+built+by+Klookers!%0A%0AGoogle+Meet+link+will+be+shared+closer+to+the+event.' +
       '&location=Taipei+Business+Office+%2B+Google+Meet';
     window.open(calUrl, '_blank');
     setDone(true);
