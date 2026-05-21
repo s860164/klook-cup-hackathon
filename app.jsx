@@ -1049,31 +1049,17 @@ function App() {
   }
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzI5KYBJbIQhcwI9hPcaXPnAuFgijNK6OIxTyB7c49YbvhhCjEwKprA29ACClX8FXNz/exec';
 
-  // Hidden-iframe form POST: sends Google session cookies, satisfying
-  // "Anyone within Klook" Apps Script auth with no backend required.
+  // GAS is deployed as "Anyone, even anonymous" — no session cookie needed.
+  // Use fetch with no-cors so the request goes through even without a CORS header
+  // on the Apps Script side; we don't need to read the response.
   function iframePost(fields) {
-    let iframe = document.getElementById('__submit_frame');
-    if (!iframe) {
-      iframe = document.createElement('iframe');
-      iframe.id   = '__submit_frame';
-      iframe.name = '__submit_frame';
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-    }
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = SCRIPT_URL;
-    form.target = '__submit_frame';
-    Object.entries(fields).forEach(([n, v]) => {
-      const inp = document.createElement('input');
-      inp.type  = 'hidden';
-      inp.name  = n;
-      inp.value = v;
-      form.appendChild(inp);
-    });
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    const body = new URLSearchParams(fields).toString();
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    }).catch(() => {/* network errors are silently ignored */});
   }
 
   function onSubmit(payload) {
