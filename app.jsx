@@ -1226,12 +1226,12 @@ function App() {
 
   function runDemoDay(email) {
     iframePost({ action: 'demo_day', email });
-    // Open Google Calendar event for the user to save
-    const calUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' +
-      '&text=Klook+AI+Hackathon+Season+2+%E2%80%93+Demo+Day' +
-      '&dates=20260629T070000Z%2F20260629T083000Z' +
-      '&details=Come+watch+the+amazing+AI+projects+built+by+Klookers!%0A%0AGoogle+Meet+link+will+be+shared+closer+to+the+event.' +
-      '&location=Taipei+Business+Office+%2B+Google+Meet';
+    // Open the canonical Demo Day event template owned by page.deng@klook.com
+    // so users get the exact same event (title, description, Meet link, attendees)
+    // that the organiser maintains.
+    const calUrl = 'https://calendar.google.com/calendar/event?action=TEMPLATE' +
+      '&tmeid=NXNyaGE5bmFqNXF2cmp2MzI5ZTlpOHVlajYgcGFnZS5kZW5nQGtsb29rLmNvbQ' +
+      '&tmsrc=page.deng%40klook.com';
     window.open(calUrl, '_blank');
     showToast(`🎉 RSVP'd as ${email} — calendar opened in new tab`, 'success');
   }
