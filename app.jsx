@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────
-// AI Hackathon — Season 2 · Taipei
+// AI Playground — Season 2 · Taipei
 // Landing page React app
 // ────────────────────────────────────────────────────────────────
 
@@ -97,7 +97,7 @@ function TopBar() {
     <header className="topbar" data-screen-label="Top Bar">
       <div className="topbar-logo">
         <img src="assets/klook/klook-logo-white.png" alt="Klook" />
-        <span className="topbar-pill">🤖 AI HACKATHON · SEASON 2</span>
+        <span className="topbar-pill">🤖 AI PLAYGROUND · SEASON 2</span>
       </div>
       <nav className="topbar-nav">
         <a href="#schedule">Schedule</a>
@@ -205,7 +205,7 @@ function Hero({ variant, showVideoBg }) {
             <span className="accent-taipei">In Taipei.</span>
           </h1>
           <p className="hero-tagline">
-            Season 2 of the <em>AI Hackathon</em> heads to <em>Taipei</em>. Five days, an AI co-pilot, a roomful of mentors, and a problem from <em>your own life</em>. Zero making experience needed.
+            Season 2 of the <em>AI Playground</em> heads to <em>Taipei</em>. Five days, an AI co-pilot, a roomful of mentors, and a problem from <em>your own life</em>. Zero making experience needed.
           </p>
           <div className="hero-cta-row">
             <a href="#submit" className="btn btn--primary">
@@ -294,7 +294,7 @@ function RulesSection() {
             <span className="tag">⚠️ Important · Please Read</span>
             <h2>Your idea must be <mark>completely unrelated to Klook work.</mark></h2>
             <p>
-              The AI Hackathon is a personal-life building event. We don't want anyone to worry about accidentally leaking company information, customer data, or unreleased work. Pick a problem from <strong>your own life</strong> — your cat, your commute, your weekend, your money. If you can't tell your idea to a friend over coffee without an NDA, it doesn't belong here.
+              The AI Playground is a personal-life building event. We don't want anyone to worry about accidentally leaking company information, customer data, or unreleased work. Pick a problem from <strong>your own life</strong> — your cat, your commute, your weekend, your money. If you can't tell your idea to a friend over coffee without an NDA, it doesn't belong here.
             </p>
           </div>
         </div>
@@ -761,7 +761,7 @@ function AwardsSection() {
             <img src="assets/klook/illos/C372-partner-award.png" alt="" />
             <div className="podium-emoji">🏆</div>
             <h4>Champion</h4>
-            <p>Highest combined score across all four judges. Take home the AI Hackathon trophy.</p>
+            <p>Highest combined score across all four judges. Take home the AI Playground trophy.</p>
           </div>
           <div className="podium-card podium-3">
             <img src="assets/klook/illos/C091-promotion.png" alt="" />
@@ -1073,8 +1073,8 @@ function Footer() {
   return (
     <footer className="foot" data-screen-label="Footer">
       <img src="assets/klook/klook-logo-white.png" alt="Klook" />
-      <h4>AI Hackathon · Season 2 · Taipei</h4>
-      <p>Organized by Klook Planning &amp; Operations. Questions? Reach out to your Team Lead or <a href="#mentors">Page Deng</a> in #ai-hackathon.</p>
+      <h4>AI Playground · Season 2 · Taipei</h4>
+      <p>Organized by Klook Planning &amp; Operations. Questions? Reach out to your Team Lead or <a href="#mentors">Page Deng</a> in #ai-playground.</p>
       <div className="micro">© 2026 Klook. Personal hackathon · Not for production work.</div>
     </footer>
   );

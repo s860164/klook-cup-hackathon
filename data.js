@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────
-// AI Hackathon · Season 1 data + Season 2 schedule
+// AI Playground · Season 1 data + Season 2 schedule
 // ────────────────────────────────────────────────────────────────
 
 const VIDEO_BASE = 'https://github.com/s860164/klook-cup-hackathon/releases/download/videos-v1/';
