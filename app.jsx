@@ -266,7 +266,7 @@ function HeroVisual({ variant, showVideoBg }) {
           </div>
           <div className="col" style={{textAlign: 'right'}}>
             <div className="lbl">Apply by</div>
-            <strong style={{color: 'var(--klook-gold-sun)'}}>Jun 15 · 12 PM</strong>
+            <strong style={{color: 'var(--klook-gold-sun)'}}>Jun 15 · 12 PM Taiwan time</strong>
           </div>
         </div>
       </div>
@@ -805,7 +805,7 @@ function FAQSection() {
     { q: "Do I have to be in Taipei?", a: "On-site training (Jun 24) is closed-door in the Taipei Business Office and we strongly prefer you attend in person. Build days are async from anywhere. Demo Day is hybrid — on-site preferred, but if you can't fly in you can submit a pre-recorded 5-min video." },
     { q: "Can my idea be related to Klook?", a: <span><strong style={{color: 'var(--klook-orange)'}}>No.</strong> All ideas must be about your personal life. We don't want anyone worrying about leaking work-related information. If in doubt — could you describe this idea to a friend without an NDA? If not, don't submit it.</span> },
     { q: "Does my project have to be an app?", a: "No. It can be a bot (LINE, Slack, Telegram), a web dashboard, a voice tool, a CLI, or even a smart spreadsheet. What matters is that it solves a real personal-life problem for you." },
-    { q: "Will there be a Season 3?", a: "應該會有，但是我們仍需要大家的積極參與！越多人參與，我們就可以去越多城市舉辦！" },
+    { q: "Will there be a Season 3?", a: "We hope so! If everyone participates enthusiastically — the more people join, the more Klook offices we can bring it to!" },
   ];
   const [open, setOpen] = useState(null);
   return (
@@ -987,7 +987,7 @@ function DemoDaySection({ onRSVP }) {
             <h3>Watch the Demo Day</h3>
             <p>Not building this time? Come see what your colleagues shipped in 5 days. Hybrid — join in person or hop on Google Meet.</p>
             <div className="demoday-details">
-              <span>📆 Mon Jun 29 · 3:00 – 4:30 PM</span>
+              <span>📆 Mon Jun 29 · 3:00 – 4:30 PM Taiwan time</span>
               <span>📍 Taipei Business Office + Google Meet</span>
             </div>
           </div>
