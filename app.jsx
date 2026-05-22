@@ -1230,7 +1230,7 @@ function App() {
     // so users get the exact same event (title, description, Meet link, attendees)
     // that the organiser maintains.
     const calUrl = 'https://calendar.google.com/calendar/event?action=TEMPLATE' +
-      '&tmeid=NXNyaGE5bmFqNXF2cmp2MzI5ZTlpOHVlajYgcGFnZS5kZW5nQGtsb29rLmNvbQ' +
+      '&tmeid=M3M0ZGpmOWcxanIxc2NsNjdob3M1aTJic3MgcGFnZS5kZW5nQGtsb29rLmNvbQ' +
       '&tmsrc=page.deng%40klook.com';
     window.open(calUrl, '_blank');
     showToast(`🎉 RSVP'd as ${email} — calendar opened in new tab`, 'success');
