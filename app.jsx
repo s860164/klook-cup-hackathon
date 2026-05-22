@@ -1,5 +1,5 @@
 // ────────────────────────────────────────────────────────────────
-// Klook AI Hackathon — Season 2 · Taipei
+// AI Hackathon — Season 2 · Taipei
 // Landing page React app
 // ────────────────────────────────────────────────────────────────
 
@@ -205,7 +205,7 @@ function Hero({ variant, showVideoBg }) {
             <span className="accent-taipei">In Taipei.</span>
           </h1>
           <p className="hero-tagline">
-            Season 2 of the Klook <em>AI Hackathon</em> heads to <em>Taipei</em>. Five days, an AI co-pilot, a roomful of mentors, and a problem from <em>your own life</em>. Zero making experience needed.
+            Season 2 of the <em>AI Hackathon</em> heads to <em>Taipei</em>. Five days, an AI co-pilot, a roomful of mentors, and a problem from <em>your own life</em>. Zero making experience needed.
           </p>
           <div className="hero-cta-row">
             <a href="#submit" className="btn btn--primary">
