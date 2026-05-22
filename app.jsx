@@ -831,9 +831,63 @@ function FAQSection() {
   );
 }
 
+// ─── Google sign-in status chip ─────────────────────────────────
+// Compact box that sits above the idea / RSVP form. Detects whether the
+// visitor is signed in with their Klook Google account; shows their email
+// if yes, or a "Sign in" button if no.
+function GoogleSignInStatus({ user, onSignIn, onSignOut, prompt = 'Sign in with your Klook Google account' }) {
+  return (
+    <div className="gis-status" style={{
+      display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px',
+      borderRadius: 12, marginBottom: 14,
+      background: user ? '#F0FAF4' : '#FFF8F0',
+      border: `1px solid ${user ? '#B7E1C7' : '#FFD6B8'}`,
+      fontSize: 14,
+    }}>
+      {user ? (
+        <>
+          {user.picture && (
+            <img src={user.picture} alt="" referrerPolicy="no-referrer"
+              style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0 }} />
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 700, color: '#1a7e3e', fontSize: 13 }}>
+              ✓ Signed in
+            </div>
+            <div style={{ color: '#444', fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user.email}
+            </div>
+          </div>
+          <button type="button" onClick={onSignOut}
+            style={{
+              background: 'transparent', border: '1px solid #ccc', color: '#666',
+              padding: '6px 10px', borderRadius: 8, fontSize: 12, cursor: 'pointer',
+            }}>
+            Sign out
+          </button>
+        </>
+      ) : (
+        <>
+          <div style={{ flex: 1, color: '#7a3d00', lineHeight: 1.4 }}>
+            <div style={{ fontWeight: 700, fontSize: 13 }}>Not signed in</div>
+            <div style={{ fontSize: 12, color: '#8a5a2a' }}>{prompt}</div>
+          </div>
+          <button type="button" onClick={onSignIn}
+            style={{
+              background: '#FF5722', border: 'none', color: '#fff', fontWeight: 700,
+              padding: '8px 14px', borderRadius: 8, fontSize: 13, cursor: 'pointer',
+              flexShrink: 0,
+            }}>
+            Sign in with Google
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── Submission form ───────────────────────────────────────────
-function SubmitSection({ onSubmit, submitted, onRemove }) {
-  const [email, setEmail] = useState('');
+function SubmitSection({ onSubmit, submitted, onRemove, user, onSignIn, onSignOut }) {
   const [idea, setIdea] = useState('');
   const [committed, setCommitted] = useState(false);
   const [error, setError] = useState('');
@@ -841,7 +895,6 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
   function handle(e) {
     e.preventDefault();
     setError('');
-    if (!email.trim()) { setError('Add your @klook.com username'); return; }
     if (idea.trim().length < 12) { setError('Tell us a bit more about your idea (12+ chars)'); return; }
     if (idea.trim().length > 2000) { setError('Idea too long — please keep it under 2000 characters'); return; }
     if (!committed) { setError('Please commit to the Jun 24–28 build window'); return; }
@@ -849,7 +902,7 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
     const lastSubmit = parseInt(localStorage.getItem('_hs_last_submit') || '0', 10);
     if (Date.now() - lastSubmit < 30000) { setError('Please wait a moment before submitting again'); return; }
     localStorage.setItem('_hs_last_submit', String(Date.now()));
-    onSubmit({ email: email.trim() + '@klook.com', idea: idea.trim() });
+    onSubmit({ idea: idea.trim() });
     setIdea('');
     setError('');
   }
@@ -898,13 +951,12 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
             <h3>Your idea, please</h3>
             <p className="sub">Personal-life problem only. Submit multiple times if you have multiple ideas. We pick at most one per person.</p>
 
-            <div className="form-row">
-              <label>Your Klook email <span className="req">*</span></label>
-              <div className="email-input-wrap">
-                <input type="text" value={email} onChange={(e) => setEmail(e.target.value.replace(/@.*$/, ''))} placeholder="your.name" />
-                <span className="email-suffix">@klook.com</span>
-              </div>
-            </div>
+            <GoogleSignInStatus
+              user={user}
+              onSignIn={onSignIn}
+              onSignOut={onSignOut}
+              prompt="Sign in once and your Klook email is auto-attached to every idea you submit."
+            />
 
             <div className="form-row">
               <label>What's the personal-life problem you want to solve? <span className="req">*</span></label>
@@ -955,27 +1007,22 @@ function SubmitSection({ onSubmit, submitted, onRemove }) {
 }
 
 // ─── Demo Day RSVP ──────────────────────────────────────────────
-function DemoDaySection({ onRSVP }) {
-  const [email, setEmail] = useState('');
+function DemoDaySection({ onRSVP, user, onSignIn, onSignOut }) {
   const [done, setDone]   = useState(false);
-  const [err, setErr]     = useState('');
+  const [pressed, setPressed] = useState(false);
 
   function handle(e) {
     e.preventDefault();
-    setErr('');
-    if (!email.trim()) { setErr('Add your @klook.com username'); return; }
-    const fullEmail = email.trim() + '@klook.com';
-    onRSVP(fullEmail);
-    // Open Google Calendar event directly — works for any Klooker without backend
-    const calUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' +
-      '&text=Klook+AI+Hackathon+Season+2+%E2%80%93+Demo+Day' +
-      '&dates=20260629T070000Z%2F20260629T083000Z' +
-      '&details=Come+watch+the+amazing+AI+projects+built+by+Klookers!%0A%0AGoogle+Meet+link+will+be+shared+closer+to+the+event.' +
-      '&location=Taipei+Business+Office+%2B+Google+Meet';
-    window.open(calUrl, '_blank');
-    setDone(true);
-    setEmail('');
+    setPressed(true);
+    onRSVP();
   }
+
+  // Show the "You're on the list!" card once the RSVP has actually fired —
+  // which is either immediately (user was signed in), or right after the
+  // post-click sign-in popup completes (user becomes truthy).
+  useEffect(() => {
+    if (pressed && user) setDone(true);
+  }, [pressed, user]);
 
   return (
     <section className="section section--demoday" id="demoday">
@@ -1002,17 +1049,15 @@ function DemoDaySection({ onRSVP }) {
             ) : (
               <form onSubmit={handle}>
                 <p className="demoday-form-label">Get a calendar invite</p>
-                <div className="email-input-wrap demoday-email">
-                  <input
-                    type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value.replace(/@.*$/, ''))}
-                    placeholder="your.name"
-                  />
-                  <span className="email-suffix">@klook.com</span>
-                </div>
-                {err && <div className="demoday-err">{err}</div>}
-                <button type="submit" className="btn-demoday">Get Demo Day Invite →</button>
+                <GoogleSignInStatus
+                  user={user}
+                  onSignIn={onSignIn}
+                  onSignOut={onSignOut}
+                  prompt="Sign in to get the calendar invite mailed to your inbox."
+                />
+                <button type="submit" className="btn-demoday">
+                  {user ? 'Get Demo Day Invite →' : 'Sign in & Get Demo Day Invite →'}
+                </button>
               </form>
             )}
           </div>
@@ -1035,6 +1080,24 @@ function Footer() {
   );
 }
 
+// ─── Google Sign-In config ──────────────────────────────────────
+const OAUTH_CLIENT_ID = '197615659400-p4mq9p4ijh49hg6k0hsjh26j8d1ftlgc.apps.googleusercontent.com';
+const SCRIPT_URL = 'https://script.google.com/a/macros/klook.com/s/AKfycbzheDtqf_2HR9Ds2JiHfG4kdz3DkkaQ6s4lB5nTTQqDUhy29eD7l-lx3YpO8oUoNuoItQ/exec';
+
+// Decode a base64url-encoded JWT payload (no signature verification — we only
+// use it to extract the email from Google's signed token client-side; the
+// server-side GAS validates the user via their Google session cookie).
+function decodeJwt(token) {
+  try {
+    const payload = token.split('.')[1];
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '==='.slice((base64.length + 3) % 4);
+    return JSON.parse(decodeURIComponent(atob(padded).split('').map(
+      (c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join('')));
+  } catch (_) { return null; }
+}
+
 // ─── App ────────────────────────────────────────────────────────
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
@@ -1042,36 +1105,156 @@ function App() {
   const [videoModal, setVideoModal] = useState(null); // { src, title }
   const [submitted, setSubmitted] = useState([]);
   const [toast, setToast] = useState(null);
+  const [user, setUser] = useState(null);              // { email, name, picture }
+  const [gisReady, setGisReady] = useState(false);     // GIS script loaded
+  // Action queued while waiting for sign-in. Once user signs in, we run it.
+  const pendingActionRef = useRef(null);
 
   function showToast(msg, kind = 'default') {
     setToast({ msg, kind });
     setTimeout(() => setToast(null), 3000);
   }
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzI5KYBJbIQhcwI9hPcaXPnAuFgijNK6OIxTyB7c49YbvhhCjEwKprA29ACClX8FXNz/exec';
 
-  // GAS is deployed as "Anyone, even anonymous" — no session cookie needed.
-  // Use fetch with no-cors so the request goes through even without a CORS header
-  // on the Apps Script side; we don't need to read the response.
+  // Hidden-iframe form POST. Carries Google session cookies (top-level
+  // navigation semantics from the iframe's perspective), so the Klook GAS
+  // deployed as "Anyone within Klook" can validate the signed-in user.
   function iframePost(fields) {
-    const body = new URLSearchParams(fields).toString();
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-    }).catch(() => {/* network errors are silently ignored */});
+    let iframe = document.getElementById('__submit_frame');
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id   = '__submit_frame';
+      iframe.name = '__submit_frame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = '__submit_frame';
+    Object.entries(fields).forEach(([n, v]) => {
+      const inp = document.createElement('input');
+      inp.type  = 'hidden';
+      inp.name  = n;
+      inp.value = v;
+      form.appendChild(inp);
+    });
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
   }
 
-  function onSubmit(payload) {
-    // Write to sheet + confirmation email + auto-add to Demo Day calendar
-    iframePost({ action: 'submit', email: payload.email, idea: payload.idea });
-    setSubmitted((p) => [...p, payload]);
-    showToast(`✨ Idea #${submitted.length + 1} submitted! Check your inbox for a confirmation email.`, 'success');
+  // GIS callback — fires after user picks an account in the popup, or on
+  // page-load silent sign-in if they previously consented.
+  function handleCredential(response) {
+    const payload = decodeJwt(response.credential);
+    if (!payload) { showToast('Sign-in failed. Please try again.', 'error'); return; }
+    if (payload.hd !== 'klook.com') {
+      showToast('Please use your @klook.com Google account', 'error');
+      return;
+    }
+    const u = { email: payload.email, name: payload.name, picture: payload.picture };
+    setUser(u);
+    // Drain pending action if any
+    const pending = pendingActionRef.current;
+    if (pending) {
+      pendingActionRef.current = null;
+      if (pending.type === 'submit') {
+        runSubmit(u.email, pending.idea);
+      } else if (pending.type === 'demo_day') {
+        runDemoDay(u.email);
+      }
+    }
   }
 
-  function onDemoDayRSVP(email) {
-    // Just add to Demo Day calendar event — no sheet write needed
+  // Wait for GIS script (loaded async in index.html), then initialise.
+  useEffect(() => {
+    let cancelled = false;
+    const tryInit = () => {
+      if (cancelled) return;
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        window.google.accounts.id.initialize({
+          client_id: OAUTH_CLIENT_ID,
+          callback: handleCredential,
+          auto_select: true,
+          cancel_on_tap_outside: false,
+          hd: 'klook.com',
+          use_fedcm_for_prompt: true,
+        });
+        setGisReady(true);
+        // Silent sign-in attempt — only displays UI if user has consented before.
+        try { window.google.accounts.id.prompt(() => {}); } catch (_) {}
+      } else {
+        setTimeout(tryInit, 150);
+      }
+    };
+    tryInit();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Trigger an interactive sign-in popup. Used when the user clicks the
+  // sign-in chip, or on submit when not yet signed in.
+  function requestSignIn() {
+    if (!window.google || !window.google.accounts) {
+      showToast('Google Sign-In is loading…', 'error');
+      return;
+    }
+    // Cancel any previous prompt state, then re-prompt
+    try { window.google.accounts.id.cancel(); } catch (_) {}
+    window.google.accounts.id.prompt((notification) => {
+      // If One Tap can't display (e.g. blocked, dismissed too many times),
+      // fall back to the Sign In With Google button by clicking the hidden one.
+      if (notification && (notification.isNotDisplayed?.() || notification.isSkippedMoment?.())) {
+        const hidden = document.querySelector('#__gis_hidden_button div[role="button"]');
+        if (hidden) hidden.click();
+      }
+    });
+  }
+
+  function signOut() {
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      try { window.google.accounts.id.disableAutoSelect(); } catch (_) {}
+    }
+    setUser(null);
+  }
+
+  // Core submit — assumes signed-in.
+  function runSubmit(email, idea) {
+    iframePost({ action: 'submit', email, idea });
+    setSubmitted((p) => [...p, { email, idea }]);
+    showToast(`✨ Idea submitted as ${email} — check your inbox!`, 'success');
+  }
+
+  function runDemoDay(email) {
     iframePost({ action: 'demo_day', email });
+    // Open Google Calendar event for the user to save
+    const calUrl = 'https://www.google.com/calendar/render?action=TEMPLATE' +
+      '&text=Klook+AI+Hackathon+Season+2+%E2%80%93+Demo+Day' +
+      '&dates=20260629T070000Z%2F20260629T083000Z' +
+      '&details=Come+watch+the+amazing+AI+projects+built+by+Klookers!%0A%0AGoogle+Meet+link+will+be+shared+closer+to+the+event.' +
+      '&location=Taipei+Business+Office+%2B+Google+Meet';
+    window.open(calUrl, '_blank');
+    showToast(`🎉 RSVP'd as ${email} — calendar opened in new tab`, 'success');
+  }
+
+  // Public handlers called by SubmitSection / DemoDaySection
+  function onSubmit({ idea }) {
+    if (user) {
+      runSubmit(user.email, idea);
+    } else {
+      pendingActionRef.current = { type: 'submit', idea };
+      showToast('Please sign in with your Klook Google account to submit', 'default');
+      requestSignIn();
+    }
+  }
+
+  function onDemoDayRSVP() {
+    if (user) {
+      runDemoDay(user.email);
+    } else {
+      pendingActionRef.current = { type: 'demo_day' };
+      showToast('Please sign in with your Klook Google account to RSVP', 'default');
+      requestSignIn();
+    }
   }
   function onRemove(i) {
     setSubmitted((p) => p.filter((_, idx) => idx !== i));
@@ -1079,6 +1262,19 @@ function App() {
   function openVideo(src, title) {
     setVideoModal({ src, title });
   }
+
+  // Hidden Sign In With Google button — fallback when One Tap is blocked.
+  // We programmatically click it from `requestSignIn` when needed.
+  const hiddenBtnRef = useRef(null);
+  useEffect(() => {
+    if (!gisReady || !hiddenBtnRef.current) return;
+    if (hiddenBtnRef.current.childElementCount > 0) return;
+    try {
+      window.google.accounts.id.renderButton(hiddenBtnRef.current, {
+        type: 'standard', theme: 'outline', size: 'large', text: 'signin_with',
+      });
+    } catch (_) {}
+  }, [gisReady]);
 
   const accentStyle = useMemo(() => {
     if (t.accentColor === '#FF5722') return {};
@@ -1103,12 +1299,27 @@ function App() {
       <MentorsSection />
       <AwardsSection />
       <FAQSection />
-      <SubmitSection onSubmit={onSubmit} submitted={submitted} onRemove={onRemove} />
-      <DemoDaySection onRSVP={onDemoDayRSVP} />
+      <SubmitSection
+        onSubmit={onSubmit}
+        submitted={submitted}
+        onRemove={onRemove}
+        user={user}
+        onSignIn={requestSignIn}
+        onSignOut={signOut}
+      />
+      <DemoDaySection
+        onRSVP={onDemoDayRSVP}
+        user={user}
+        onSignIn={requestSignIn}
+        onSignOut={signOut}
+      />
       <Footer />
 
       <FinalistModal project={openProject} onClose={() => setOpenProject(null)} />
       <VideoModal src={videoModal?.src} title={videoModal?.title} onClose={() => setVideoModal(null)} />
+
+      {/* Hidden Sign In With Google button — used as click-fallback when One Tap is blocked */}
+      <div id="__gis_hidden_button" ref={hiddenBtnRef} style={{ position: 'absolute', left: -9999, top: -9999 }} />
 
       {toast && (
         <div className={`toast show ${toast.kind === 'success' ? 'success' : ''}`}>{toast.msg}</div>
