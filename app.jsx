@@ -1166,13 +1166,56 @@ function App() {
     }
   }
 
+  // OAuth2 token client (separate from id flow above) — used to drive a real
+  // popup window on click. id.prompt() / One Tap can be silently rate-limited
+  // by Google once a user has dismissed it, and our previous fallback
+  // (programmatically clicking the rendered button) failed because cross-
+  // origin iframes don't honour synthetic clicks. The token client is built
+  // for user-gesture-triggered popups and has no cool-down.
+  const tokenClientRef = useRef(null);
+
+  // Async — called after the OAuth2 popup returns. Fetches the user's email
+  // from Google's userinfo endpoint using the access token, then mirrors the
+  // same downstream behaviour as the id-flow handleCredential callback.
+  async function handleTokenResponse(response) {
+    if (!response || response.error || !response.access_token) {
+      showToast('Sign-in failed. Please try again.', 'error');
+      return;
+    }
+    try {
+      const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: 'Bearer ' + response.access_token },
+      }).then((r) => r.json());
+      if (userInfo.hd !== 'klook.com') {
+        showToast('Please use your @klook.com Google account', 'error');
+        return;
+      }
+      const u = { email: userInfo.email, name: userInfo.name, picture: userInfo.picture };
+      setUser(u);
+      const pending = pendingActionRef.current;
+      if (pending) {
+        pendingActionRef.current = null;
+        if (pending.type === 'submit') {
+          runSubmit(u.email, pending.idea);
+        } else if (pending.type === 'demo_day') {
+          runDemoDay(u.email);
+        }
+      }
+    } catch (_) {
+      showToast('Sign-in failed. Please try again.', 'error');
+    }
+  }
+
   // Wait for GIS script (loaded async in index.html), then initialise.
   useEffect(() => {
     let cancelled = false;
     const tryInit = () => {
       if (cancelled) return;
-      if (window.google && window.google.accounts && window.google.accounts.id) {
-        window.google.accounts.id.initialize({
+      const g = window.google;
+      if (g && g.accounts && g.accounts.id && g.accounts.oauth2) {
+        // 1. ID flow — used for the silent auto sign-in attempt on page load
+        //    when the visitor has previously consented to this OAuth client.
+        g.accounts.id.initialize({
           client_id: OAUTH_CLIENT_ID,
           callback: handleCredential,
           auto_select: true,
@@ -1180,9 +1223,17 @@ function App() {
           hd: 'klook.com',
           use_fedcm_for_prompt: true,
         });
+        // 2. OAuth2 token client — used for explicit click-to-sign-in (reliable
+        //    popup regardless of One Tap cool-down state).
+        tokenClientRef.current = g.accounts.oauth2.initTokenClient({
+          client_id: OAUTH_CLIENT_ID,
+          scope: 'openid email profile',
+          hd: 'klook.com',
+          callback: handleTokenResponse,
+        });
         setGisReady(true);
-        // Silent sign-in attempt — only displays UI if user has consented before.
-        try { window.google.accounts.id.prompt(() => {}); } catch (_) {}
+        // Silent attempt — won't show UI unless the user has consented before.
+        try { g.accounts.id.prompt(() => {}); } catch (_) {}
       } else {
         setTimeout(tryInit, 150);
       }
@@ -1192,22 +1243,14 @@ function App() {
   }, []);
 
   // Trigger an interactive sign-in popup. Used when the user clicks the
-  // sign-in chip, or on submit when not yet signed in.
+  // sign-in chip, or on submit when not yet signed in. Goes through the
+  // OAuth2 token client (real popup, no rate-limit) — NOT id.prompt().
   function requestSignIn() {
-    if (!window.google || !window.google.accounts) {
+    if (!tokenClientRef.current) {
       showToast('Google Sign-In is loading…', 'error');
       return;
     }
-    // Cancel any previous prompt state, then re-prompt
-    try { window.google.accounts.id.cancel(); } catch (_) {}
-    window.google.accounts.id.prompt((notification) => {
-      // If One Tap can't display (e.g. blocked, dismissed too many times),
-      // fall back to the Sign In With Google button by clicking the hidden one.
-      if (notification && (notification.isNotDisplayed?.() || notification.isSkippedMoment?.())) {
-        const hidden = document.querySelector('#__gis_hidden_button div[role="button"]');
-        if (hidden) hidden.click();
-      }
-    });
+    tokenClientRef.current.requestAccessToken({ prompt: '', hint: '' });
   }
 
   function signOut() {
